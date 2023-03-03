@@ -28,13 +28,15 @@ class PostController extends Controller
 
     //save a post with title and content to DATABASE
     public function store(Request $req){
-//        return $req->content;
-        Post::create([
-            'title' => $req->title,
-            'content' => $req->content,
-            'category_id' => $req->category_id,
+
+        $validated = $req->validate([
+            'title' => 'required|max:255', //unique:posts
+            'content' => 'required',
+            'category_id' => 'required|numeric|exists:categories,id'
         ]);
-        return redirect()->route('posts.index');
+
+        Post::create($validated);
+        return redirect()->route('posts.index')->with('message', 'Post save successfully!');
     }
 
     //return view with a form create
@@ -42,7 +44,7 @@ class PostController extends Controller
 //        $post = Post::find($id); == Post $post
 //        $cat = $post->category;
 //        dd($cat->code);
-        return view('posts.show', ['post' => $post]);
+        return view('posts.show', ['post' => $post, 'categories' => Category::all()]);
     }
 
     public function edit(Post $post)
@@ -53,13 +55,21 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        $post->update([
-            'title' => $request->title,     //$request->title == $request->input('title')
-            'content' => $request->content, //$request->content == $request->input('content')
-            'category_id' => $request->category_id,
+        $validated = $request->validate([
+            'title' => 'required|max:255', //unique:posts
+            'content' => 'required',
+            'category_id' => 'required|numeric|exists:categories,id'
         ]);
 
-        return redirect()->route('posts.index');
+        $post->update($validated);
+
+//        $post->update([
+//            'title' => $request->title,     //$request->title == $request->input('title')
+//            'content' => $request->content, //$request->content == $request->input('content')
+//            'category_id' => $request->category_id,
+//        ]);
+
+        return redirect()->route('posts.index')->with('message', 'Post updated successfully!');
     }
 
 

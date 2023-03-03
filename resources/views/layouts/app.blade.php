@@ -7,7 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title')</title>
+{{--    <title>{{ config('app.name', 'Laravel') }}</title>--}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -29,9 +30,17 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('posts.index') }}">All Posts</a>
+                        </li>
+                        @foreach($categories as $cat)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('posts.category', $cat->id) }}">{{$cat->name}}</a>
+                        </li>
+                        @endforeach
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -72,6 +81,26 @@
                 </div>
             </div>
         </nav>
+
+        @if (session('message'))
+            <div id="top-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+{{--        этот скрипт для закрытия уведомления через 5 сек--}}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const alert = bootstrap.Alert.getOrCreateInstance('#top-alert');
+                    alert.close();
+                }, 5000);
+            });
+        </script>
+
+{{--        этот скрипт для закрытия уведомления--}}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
         <main class="py-4">
             @yield('content')

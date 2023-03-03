@@ -1,30 +1,38 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <title>All posts</title>
-</head>
-<body>
+@extends('layouts.app')
 
-    <a href="{{ route('posts.index') }}">All Posts</a>
-    @foreach($categories as $cat)
-        <a href="{{ route('posts.category', $cat->id) }}">{{$cat->name}}</a>
-    @endforeach
+@section('title', "INDEX PAGE")
 
-    <div>
-        <a href="{{ route('posts.create') }}">Go to Create Page</a>
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <a class="btn btn-outline-primary mb-3" href="{{ route('posts.create') }}">Go to Create Page</a>
+                @foreach($posts as $post)
+                    <div class="card mb-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{$post->title}}</h5>
+                            <p class="card-text">{{$post->content}}</p>
+                            <a href="{{route('posts.show', $post->id)}}" class="btn btn-primary mb-3">Read more</a>
+
+                            <form action="{{route('posts.destroy', $post->id)}}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
+@endsection
 
-    @foreach($posts as $post)
-        <a href="{{route('posts.show', $post->id)}}"><h3>{{$post->title}}</h3></a>
-        <p>{{$post->content}}</p>
 
-        <form action="{{route('posts.destroy', $post->id)}}" method="post">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Delete</button>
-        </form>
-    @endforeach
 
-</body>
-</html>
+
+
+
+
+
+
