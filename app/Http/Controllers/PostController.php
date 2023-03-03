@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+
+    public function postsByCategory(Category $category)
+    {
+        return view('posts.index', ['posts' => $category->posts]);
+    }
+
 //return view with all posts
     public function index(){
         $allPosts = Post::all();
@@ -32,6 +39,8 @@ class PostController extends Controller
     //return view with a form create
     public function show(Post $post){
 //        $post = Post::find($id); == Post $post
+//        $cat = $post->category;
+//        dd($cat->code);
         return view('posts.show', ['post' => $post]);
     }
 
