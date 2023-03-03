@@ -12,18 +12,18 @@ class PostController extends Controller
 
     public function postsByCategory(Category $category)
     {
-        return view('posts.index', ['posts' => $category->posts]);
+        return view('posts.index', ['posts' => $category->posts, 'categories' => Category::all()]);
     }
 
 //return view with all posts
     public function index(){
         $allPosts = Post::all();
-        return view('posts.index', ['posts' => $allPosts]);
+        return view('posts.index', ['posts' => $allPosts, 'categories' => Category::all()]);
     }
 
     //return view with a form create
     public function create(){
-        return view('posts.create');
+        return view('posts.create', ['categories' => Category::all()]);
     }
 
     //save a post with title and content to DATABASE
@@ -32,6 +32,7 @@ class PostController extends Controller
         Post::create([
             'title' => $req->title,
             'content' => $req->content,
+            'category_id' => $req->category_id,
         ]);
         return redirect()->route('posts.index');
     }
@@ -46,7 +47,7 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        return view('posts.edit', ['post' => $post]);
+        return view('posts.edit', ['post' => $post, 'categories' => Category::all()]);
     }
 
 
@@ -55,6 +56,7 @@ class PostController extends Controller
         $post->update([
             'title' => $request->title,     //$request->title == $request->input('title')
             'content' => $request->content, //$request->content == $request->input('content')
+            'category_id' => $request->category_id,
         ]);
 
         return redirect()->route('posts.index');
