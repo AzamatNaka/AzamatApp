@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Comment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -44,7 +45,13 @@ class PostController extends Controller
 //        $post = Post::find($id); == Post $post
 //        $cat = $post->category;
 //        dd($cat->code);
-        return view('posts.show', ['post' => $post, 'categories' => Category::all()]);
+
+        $comment = Comment::join('posts', 'comments.post_id', '=', 'posts.id')
+            ->where('posts.id', '=', $post->id)
+            ->select('comments.*')
+            ->get();
+
+        return view('posts.show', ['post' => $post, 'categories' => Category::all(), 'comment' => $comment]);
     }
 
     public function edit(Post $post)
