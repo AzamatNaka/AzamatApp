@@ -7,18 +7,23 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
 
     public function postsByCategory(Category $category)
     {
+        $category->load('posts.user');
+//        dd($category);
         return view('posts.index', ['posts' => $category->posts, 'categories' => Category::all()]);
     }
 
 //return view with all posts
     public function index(){
-        $allPosts = Post::all();
+//        $allPosts = Post::all(); //get() деген запрос жиберу егерде пост деген класс болса with деп жазылады (бул астында турган кодка арналган кыска тусиниктеме)
+//        $allPosts = Post::with('comments.user')->get(); // бириншы барлык посттарды коментарилермен бирге алып шык(comments деген post model дегеннын функциясы) потом сол коментарилерды жазган юзерлерди алып шык(user деген comment modelдын функциясы)
+        $allPosts = Post::with('user')->get(); //барлык посттарды алып шык и сол постты жазган юзерлермен бирге(user Post Modelдын ышындеги функция)
         return view('posts.index', ['posts' => $allPosts, 'categories' => Category::all()]);
     }
 
@@ -35,8 +40,9 @@ class PostController extends Controller
             'content' => 'required',
             'category_id' => 'required|numeric|exists:categories,id'
         ]);
-
-        Post::create($validated);
+//        dd(Auth::user()->posts); //осы кирип турган юзердин посттары
+//        Post::create($validated + ['user_id' => Auth::user()->id]);
+        Auth::user()->posts()->create($validated); // осы юзердин посттарынын касына validatedтеги посттарды косып создать ет // осы жердеги posts деген фукция user modelдеги функция
         return redirect()->route('posts.index')->with('message', 'Post save successfully!');
     }
 
@@ -46,12 +52,13 @@ class PostController extends Controller
 //        $cat = $post->category;
 //        dd($cat->code);
 
-        $comment = Comment::join('posts', 'comments.post_id', '=', 'posts.id')
-            ->where('posts.id', '=', $post->id)
-            ->select('comments.*')
-            ->get();
-
-        return view('posts.show', ['post' => $post, 'categories' => Category::all(), 'comment' => $comment]);
+//        $comment = Comment::join('posts', 'comments.post_id', '=', 'posts.id')
+//            ->where('posts.id', '=', $post->id)
+//            ->select('comments.*')
+//            ->get();
+//        $comment = $post->comments;
+        $post->load('comments.user'); // бул жерде post деген обект кеп турган ушин with дын орнына load деп жазамыз бул тура $allPosts = Post::with('comments.user')->get(); осы сиякты запрос
+        return view('posts.show', ['post' => $post, 'categories' => Category::all()]);
     }
 
     public function edit(Post $post)

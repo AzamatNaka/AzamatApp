@@ -10,7 +10,7 @@
                 @foreach($posts as $post)
                     <div class="card mb-3" style="width: 15rem;">
                         <div class="card-body">
-                            <h5 class="card-title">{{$post->title}}</h5>
+                            <h5 class="card-title"><h3>{{$post->title}}</h3> <small>Author: {{ $post->user->name }}</small></h5>
                             <p class="card-text">{{$post->content}}</p>
                             <div class="d-inline-flex justify-content-between" style="width: 100%">
                                 <a href="{{route('posts.show', $post->id)}}" class="btn btn-primary mb-3">Read more</a>

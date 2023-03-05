@@ -38,17 +38,18 @@
                 </form>
             </div>
 
-            @if($comment != null)
-                @foreach($comment as $com)
+{{--            @if($comment != null)--}}
+                @foreach($post->comments as $com)
                     <div class="col-md-10 mt-3 shadow-sm p-2 bg-white d-inline-flex justify-content-between">
                         <p class="mr-5">{{ $com->comment }}</p>
+                        <small>{{$com->created_at}} | author: {{$com->user->name}}</small>
                         <div class="btn-group btn-sm d-inline-flex align-items-center">
 
 {{--                            <a class="btn btn-outline-success btn-sm mx-3" style="height: 90%" href="{{route('comments.edit', $com->id)}}">Edit</a>--}}
 
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{$com->id}}">
-                                Open modal
+                                Edit
                             </button>
 
                             <!-- The Modal -->
@@ -98,7 +99,7 @@
 
                     </div>
                 @endforeach
-            @endif
+{{--            @endif--}}
 
         </div>
     </div>

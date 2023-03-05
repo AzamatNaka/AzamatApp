@@ -40,14 +40,16 @@
 
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('posts.index') }}">All Posts</a>
-                        </li>
-                        @foreach($categories as $cat)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('posts.category', $cat->id) }}">{{$cat->name}}</a>
-                        </li>
-                        @endforeach
+                        @isset($categories)
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('posts.index') }}">All Posts</a>
+                            </li>
+                            @foreach($categories as $cat)
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('posts.category', $cat->id) }}">{{$cat->name}}</a>
+                                </li>
+                            @endforeach
+                        @endisset
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -71,16 +73,28 @@
                                     {{ Auth::user()->name }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+{{--                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">--}}
+{{--                                    <a class="dropdown-item" href="{{ route('logout') }}"--}}
+{{--                                       onclick="event.preventDefault();--}}
+{{--                                           document.getElementById('logout-form').submit();">--}}
+{{--                                        {{ __('Logout') }}--}}
+{{--                                    </a>--}}
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
+{{--                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">--}}
+{{--                                        @csrf--}}
+{{--                                    </form>--}}
+{{--                                </div>--}}
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary">Logout</button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="dropdown-item">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary dropdown-item">Logout</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </li>
                         @endguest
@@ -89,10 +103,21 @@
             </div>
         </nav>
 
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" id="top-alert">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close py-auto pb-1" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @if (session('message'))
-            <div id="top-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            <div id="top-alert" class="alert alert-success alert-dismissible fade show d-inline-flex align-items-center mt-3 ml-5" role="alert">
                 {{ session('message') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close py-auto pb-1" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
@@ -102,7 +127,7 @@
                 setTimeout(() => {
                     const alert = bootstrap.Alert.getOrCreateInstance('#top-alert');
                     alert.close();
-                }, 5000);
+                }, 10000);
             });
         </script>
 

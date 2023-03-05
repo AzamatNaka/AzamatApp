@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->nullable() //null бола алады
                 ->constrained() // связка жасауга комектеседи
-                ->nullOnDelete(); // user удалить етилип калса сонын айдиы null боп калады
+                ->nullOnDelete(); // user удалить етилип калса осы коменттын айдиы null боп калады
             $table->foreignId('post_id')
                 ->constrained() // связка жасауга комектеседи форинки жасауга
                 ->cascadeOnDelete(); // post ошетин болса сол посттын коменттарилары ошип калады (постпен бирге)

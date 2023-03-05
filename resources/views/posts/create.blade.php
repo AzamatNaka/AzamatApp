@@ -9,16 +9,6 @@
 
                 <a class="btn btn-outline-primary mb-3" href="{{ route('posts.index') }}">Go to Index Page</a>
 
-                @if($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <form action="{{ route('posts.store') }}" method="post">
                     @csrf
 
@@ -49,6 +39,8 @@
                         <div class="alert alert-danger mt-3">{{ $message }}</div>
                         @enderror
                     </div>
+
+{{--                    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">--}}
 
                     <div class="form-group mt-3">
                         <button class="btn btn-outline-success" type="submit">Save post</button>
