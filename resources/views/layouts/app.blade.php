@@ -86,9 +86,8 @@
 {{--                                </div>--}}
 
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-primary">Logout</button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
-                                    </button>
+{{--                                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">--}}
+{{--                                    </button>--}}
                                     <div class="dropdown-menu">
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="dropdown-item">
                                             @csrf

@@ -58,6 +58,8 @@ class CommentController extends Controller
     public function update(Request $request, Comment $comment)
     {
 //        dd($request);
+        $this->authorize('update', $comment);
+
         $validated = $request->validate([
             'comment' => 'required',
         ]);
@@ -75,8 +77,8 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
+        $this->authorize('delete', $comment);
         $comment->delete();
-
         return back()->with('message', 'Comment deleted successfully!');
 //        $post = Post::find($comment->post_id);
 //        $comment = Comment::join('posts', 'comments.post_id', '=', 'posts.id')

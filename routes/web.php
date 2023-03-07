@@ -1,14 +1,20 @@
 <?php
 
-use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Auth2\RegisterController;
 use App\Http\Controllers\Auth2\LoginController;
+use App\Http\Controllers\Adm\UserController;
+use App\Http\Controllers\Adm\CategoryController;
 
 Route::get('/', function (){
     return redirect()->route('posts.index');
+});
+
+Route::middleware('hasrole:moderator')->group(function () {
+    // moderator kiretin routetar
 });
 
 Route::middleware('auth')->group(function (){
@@ -16,11 +22,24 @@ Route::middleware('auth')->group(function (){
     Route::resource('posts', PostController::class)->except('index', 'show');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::resource('/comments', CommentController::class)->only('store', 'update', 'destroy'); // for comment here use only store, update, destroy
+
+//    prefix('adm') это для добавления к url слово adm (например тогда будет /adm/users/)
+//    as('adm.') это для добавления к впереди name routeта слово adm. (например тогда будет adm.users.index)
+    Route::prefix('adm')->as('adm.')->middleware('hasrole:admin, moderator')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+//        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('/users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
+        Route::put('/users/{user}/unban', [UserController::class, 'unban'])->name('users.unban');
+//        Route::get('/adm/users/search', [UserController::class, 'index'])->name('adm.users.search'); // for search
+//        Route::get('/adm/posts', [UserController::class, 'index'])->name('adm.posts');
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    });
 });
 
 Route::resource('posts', PostController::class)->only('index', 'show'); //for posts
 
-Route::get('/posts/category/{category}', [PostController::class, 'postsByCategory'])->name('posts.category'); //->middleware('auth');//middleware делает проверку а именно auth то есть пользователь должен залогиниться //for posts by category
+Route::get('/posts/category/{category}', [PostController::class, 'postsByCategory'])->name('posts.category'); //->middleware('hasrole:admin'); //->middleware('auth');//middleware делает проверку а именно auth то есть пользователь должен залогиниться //for posts by category
 
 //Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

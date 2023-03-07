@@ -13,8 +13,9 @@
                     <div class="card-body">
                         <h5 class="card-title">{{$post->title}}</h5>
                         <p class="card-text">{{$post->content}}</p>
-
-                        <a class="btn btn-outline-success" style="width: 100%" href="{{route('posts.edit', $post->id)}}">Edit</a>
+                        @can('update', $post)
+                            <a class="btn btn-outline-success" style="width: 100%" href="{{route('posts.edit', $post->id)}}">Edit</a>
+                        @endcan
                     </div>
                 </div>
 
@@ -46,12 +47,12 @@
                         <div class="btn-group btn-sm d-inline-flex align-items-center">
 
 {{--                            <a class="btn btn-outline-success btn-sm mx-3" style="height: 90%" href="{{route('comments.edit', $com->id)}}">Edit</a>--}}
-
+                            @can('update', $com)
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{$com->id}}">
                                 Edit
                             </button>
-
+                            @endcan
                             <!-- The Modal -->
                             <div class="modal fade" id="{{$com->id}}">
                                 <div class="modal-dialog modal-lg">
@@ -89,12 +90,13 @@
                             </div>
 
 
-
-                            <form action="{{route('comments.destroy', $com->id)}}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger mx-1" style="height: 80%" type="submit">Delete</button>
-                            </form>
+                            @can('delete', $com)
+                                <form action="{{route('comments.destroy', $com->id)}}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger mx-1" style="height: 80%" type="submit">Delete</button>
+                                </form>
+                            @endcan
                         </div>
 
                     </div>
