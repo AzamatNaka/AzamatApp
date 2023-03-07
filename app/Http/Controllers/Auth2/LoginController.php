@@ -24,6 +24,8 @@ class LoginController extends Controller
         ]);
 
         if(Auth::attempt($validated)) { //attempt базадан тексереди validatedтеги данный бар ма деп иа болса логин кылып киргизеди
+            if(Auth::user()->role->name == "admin")
+                return redirect()->intended('/adm/users');
             return redirect()->intended('/posts');
         }
 

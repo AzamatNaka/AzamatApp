@@ -29,12 +29,13 @@ class PostController extends Controller
 
     //return view with a form create
     public function create(){
+        $this->authorize('create', Post::class);
         return view('posts.create', ['categories' => Category::all()]);
     }
 
     //save a post with title and content to DATABASE
     public function store(Request $req){
-
+        $this->authorize('create', Post::class);
         $validated = $req->validate([
             'title' => 'required|max:255', //unique:posts
             'content' => 'required',
@@ -63,12 +64,14 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
+        $this->authorize('update', $post);
         return view('posts.edit', ['post' => $post, 'categories' => Category::all()]);
     }
 
 
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
         $validated = $request->validate([
             'title' => 'required|max:255', //unique:posts
             'content' => 'required',
@@ -89,6 +92,9 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        // authenticatation (authenticate) - аутентикация то есть просто киру логин парольмен
+        // authorization (authorize) - авторизация сенде права бар ма жок соны тексеру (мысалга бирденени косуга или оширу дегендей)
+        $this->authorize('delete', $post); // $this->authorize проверяет политику то есть он отправляет в PostPolicy в функцию delete $post на проверку
         $post->delete();
         return redirect()->route('posts.index');
     }
