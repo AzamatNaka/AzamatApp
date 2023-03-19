@@ -19,6 +19,71 @@
                     </div>
                 </div>
 
+{{--                средний рейтинг--}}
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        @if($avgRating != 0)
+                            <div class="card p-2 mb-3">
+                                <h5 class="mb-2"> Rating: {{round($avgRating, 1)}}</h5>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $avgRating*10 }}%" aria-valuenow="{{ $avgRating*10 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+
+
+                {{--                рейтинг беру--}}
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        @auth() {{--логин жасаган юзерлер гана коре алады--}}
+                            <form action="{{ route('posts.rate', $post->id) }}" method="post">
+                                @csrf
+                                <div class="input-group mb-3">
+                                    <select class="form-select" name="rating">
+                                        @for($i=0; $i<=10; $i++)
+                                            <option {{ $myRating == $i ? 'selected' : ''}} value="{{$i}}">
+                                                {{ $i==0 ? 'Not rated' : $i }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Rate</button>
+                                </div>
+                            </form>
+                        {{--                отмена рейтинга то есть рейтингынды алып тыстау--}}
+                            <form action="{{ route('posts.unrate', $post->id) }}" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-secondary">Unrate</button>
+                            </form>
+                        @endauth
+                    </div>
+                </div>
+
+{{--                               start cart--}}
+                @auth()
+                    <form action="{{ route('cart.puttocart', $post->id) }}" method="post" class="form-inline mt-3">
+                        @csrf
+                        <div class="form-group">
+                            <label for="color" class="mr-2">Color:</label>
+                            <select name="color" id="color" class="form-control mr-2">
+                                <option value="Blue">Blue</option>
+                                <option value="Red">Red</option>
+                                <option value="Black">Black</option>
+                                <option value="White">White</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="number" class="mr-2">Quantity:</label>
+                            <input type="number" name="number" id="number" class="form-control mr-2" placeholder="1" min="1" max="100"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                @endauth
+{{--                               end cart--}}
+
+
             </div>
 
             <div class="col-md-10 mt-3">

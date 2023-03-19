@@ -42,6 +42,9 @@
                     <ul class="navbar-nav me-auto">
                         @isset($categories)
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('cart.index') }}">Cart</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('posts.index') }}">All Posts</a>
                             </li>
                             @foreach($categories as $cat)
@@ -89,6 +92,14 @@
 {{--                                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">--}}
 {{--                                    </button>--}}
                                     <div class="dropdown-menu">
+
+{{--                                    @admin чтобы это работал я прописал условия в boot() методе AppServiceProvider.php--}}
+                                        @admin
+                                        <div>
+                                            <a class="dropdown-item text-center" href="{{ route('adm.users.index') }}">Cabinet</a>
+                                        </div>
+                                        @endadmin
+
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="dropdown-item">
                                             @csrf
                                             <button type="submit" class="btn btn-primary dropdown-item">Logout</button>
