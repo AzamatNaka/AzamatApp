@@ -11,6 +11,28 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    public function rate(Request $request, Post $post){
+        $request->validate([
+           'rating' => 'required|min:1|max:10'
+        ]);
+        $postRated = Auth::user()->postsRated()->where('post_id', $post->id)->first(); //осы кирип турган юзердын User modelдын ышиндеги postsRated деген функцияны шакыр и сонын ышиндеги связканы ыздейды где 'post_id' == $post->id (first() - деген ен бириншы турганды алып шыгады)
+        if($postRated != null){
+            Auth::user()->postsRated()->updateExistingPivot($post->id, ['rating' => $request->input('rating')]);
+        }
+        else{
+            Auth::user()->postsRated()->attach($post->id, ['rating' => $request->input('rating')]); //attach типа используется вместо create
+        }
+        return back();
+    }
+
+    public function unrate(Post $post){
+        $postRated = Auth::user()->postsRated()->where('post_id', $post->id)->first(); //осы кирип турган юзердын User modelдын ышиндеги postsRated деген функцияны шакыр и сонын ышиндеги связканы ыздейды где 'post_id' == $post->id (first() - деген ен бириншы турганды алып шыгады)
+        if($postRated != null){
+            Auth::user()->postsRated()->detach($post->id); //осы юзер багалаган посттын(где $post->id осындай) связкасын оширип тыстайды
+//            $post->usersRated()->detach(); // осы $postтын барлык юзерлердин берген багаларын оширип тыстайды (неге барлык ойткени биз юзердын айдиын бермедик )
+        }
+        return back();
+    }
 
     public function postsByCategory(Category $category)
     {
@@ -58,8 +80,26 @@ class PostController extends Controller
 //            ->select('comments.*')
 //            ->get();
 //        $comment = $post->comments;
+
         $post->load('comments.user'); // бул жерде post деген обект кеп турган ушин with дын орнына load деп жазамыз бул тура $allPosts = Post::with('comments.user')->get(); осы сиякты запрос
-        return view('posts.show', ['post' => $post, 'categories' => Category::all()]);
+
+        $myRating = 0;
+        if (Auth::check()){
+            $postRated = Auth::user()->postsRated()->where('post_id', $post->id)->first();
+            if($postRated != null)
+                $myRating = $postRated->pivot->rating; //many to many связкада pivot дегенды колданамыз чтобы $postRatedтен ratingты алу ушин
+        }
+
+//        средний рейтинг
+        $avgRating = 0;
+        $sum = 0;
+        $ratedUsers = $post->usersRated()->get(); // осы $postты багалаган юзерлерды(usersRated() деген Post modelдын ышиндеги функция) алып шыгады (get() деген массивты алып шыгады то есть барлык результатты)
+        foreach ($ratedUsers as $ru){
+            $sum += $ru->pivot->rating;
+        }
+        if (count($ratedUsers) > 0)
+            $avgRating = $sum/count($ratedUsers);
+        return view('posts.show', ['post' => $post, 'categories' => Category::all(), 'myRating' => $myRating, 'avgRating' => $avgRating]);
     }
 
     public function edit(Post $post)

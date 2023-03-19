@@ -44,8 +44,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function posts(){
+    public function posts(){ // юзердин создать еткен посттарга арналган
         return $this->hasMany(Post::class);
+    }
+
+    public function postsRated(){ // юзердын посттарга оценка бергени \еще + rating тен баска посттардын обектысын тож кайтарады
+        return $this->belongsToMany(Post::class) // тек пост и юзер айдилармен жумыс ыстейды
+            ->withPivot('rating') // withPivot rating деген столбецты косып тур
+            ->withTimestamps(); // 'created_at', 'updated_at' осы екеуын косып тур
+//        return $this->belongsToMany(Post::class, 'post_rate_user'); баска ат бергин келсе
+    }
+
+    public function postsBought(){ //сатып алган посттар
+        return $this->belongsToMany(Post::class, 'cart')
+            ->withTimestamps()
+            ->withPivot('number', 'color', 'status');
+    }
+
+    public function postsWithStatus($status){
+        return $this->belongsToMany(Post::class, 'cart')
+            ->wherePivot('status', $status)
+            ->withPivot('number', 'color', 'status')
+            ->withTimestamps();
     }
 
     public function comments(){

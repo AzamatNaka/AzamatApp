@@ -20,7 +20,20 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function user(){
+    public function user(){ // осы постты создать еткен юзер
         return $this->belongsTo(User::class);
+    }
+
+    public function usersRated(){ // осы постка оценка берген юзерлер
+        return $this->belongsToMany(User::class)
+        ->withPivot('rating')
+        ->withTimestamps();
+    }
+
+    public function usersBought(){
+        return $this->belongsToMany(User::class, 'cart')
+            ->withTimestamps()
+            ->withPivot('number', 'color', 'status')
+            ->using(Cart::class);
     }
 }
